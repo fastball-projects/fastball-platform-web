@@ -5,10 +5,10 @@ import {
 } from "@ant-design/icons";
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { HashRouter, Routes, Route, Outlet, Link, RouteProps, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, Outlet, Link, Navigate, RouteProps, useLocation } from "react-router-dom";
 import ProLayout, { PageContainer } from '@ant-design/pro-layout';
 import type { MenuProps } from "antd";
-import { Spin, Button, Result, Dropdown, message, Modal } from 'antd';
+import { Spin, Button, Result, Dropdown, message, Modal, Drawer } from 'antd';
 
 // import { FastballContextProvider } from 'fastball-frontend-common';
 
@@ -21,6 +21,8 @@ import { MessageIcon, MessageList } from './message'
 import { BusinessContextSelector } from './business-context'
 import { buildJsonRequestInfo } from './utils'
 import config from '../config.json'
+
+import './main.scss'
 
 const TOKEN_LOCAL_KEY = 'fastball_token';
 
@@ -62,9 +64,11 @@ export const menuRouteBuilder = (menu: MenuItemRoute) => {
   if (menu.component) {
     const MenuItemComponent = menu.component
     routeProps.element = (
-      <PageContainer>
-        <MenuItemComponent input={menu.params} />
-      </PageContainer>
+//       <PageContainer fixedHeader breadcrumbRender={false}>
+        <div className="fastball-web-container">
+            <MenuItemComponent input={menu.params} />
+        </div>
+//       </PageContainer>
     )
   }
   return (
@@ -109,14 +113,13 @@ const HomePage: React.FC<RouteComponentProps> = ({ routes }) => {
   //   });
   //   authorizedRoutes = routes.map(route => filterAuthorizedMenus(route, menuKeyMap)).filter(Boolean);;
   // }
-
+ const indexRoute = authorizedRoutes[0]?.component ? <Route index element={<Navigate to={authorizedRoutes[0].path} replace />} /> : null
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Layout routes={authorizedRoutes} currentUser={currentUser} />}>
-        {applications}
+        {indexRoute}
         {menuRoutes}
-        <Route path="/message" element={<MessageList />} />
         <Route path="*" element={<Page404 />} />
       </Route>
     </Routes>
@@ -142,6 +145,7 @@ const Layout: React.FC<RouteComponentProps> = ({ routes, currentUser }) => {
   const { pathname: locationPathname } = useLocation();
   const [pathname, setPathname] = useState(locationPathname);
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+  const [changeMessageModalOpen, setChangeMessageModalOpen] = useState(false);
 
   const userMenu: MenuProps["items"] = [
     {
@@ -187,10 +191,37 @@ const Layout: React.FC<RouteComponentProps> = ({ routes, currentUser }) => {
     >
       <ProLayout
         fixSiderbar
-        splitMenus
+        fixedHeader
+        iconfontUrl={config.menuIconfontUrl}
+        collapsedButtonRender={false}
+//         splitMenus
+//         menuHeaderRender={(p)=>console.log(p)}
         layout="mix"
+        headerContentRender={(p) =>{
+            const components = []
+            const applicationCode = pathname.split('/')[1]
+            const application = currentUser?.applications?.find((app: Application) => app.code === applicationCode)
+            if (application?.businessContext) {
+                components.push(<BusinessContextSelector businessContextKey={application.businessContext} />)
+            }
+            return components;
+        }}
         title={config.title}
         logo={config.logo}
+        token={{
+          bgLayout: '#fff',
+          header: {
+            colorBgHeader: '#fff',
+          },
+          sider: {
+            colorMenuBackground: '#fff',
+            colorTextMenuSelected: '#1677ff',
+            colorBgMenuItemSelected: '#e6f4ff',
+          },
+          pageContainer: {
+            colorBgPageContainer: '#fff',
+          },
+        }}
         route={{
           path: '/',
           routes,
@@ -212,17 +243,12 @@ const Layout: React.FC<RouteComponentProps> = ({ routes, currentUser }) => {
 
         actionsRender={() => {
           const actions = [];
-          const applicationCode = pathname.split('/')[1]
-          const application = currentUser?.applications?.find((app: Application) => app.code === applicationCode)
-          if (application?.businessContext) {
-            actions.push(<BusinessContextSelector businessContextKey={application.businessContext} />)
-          }
           if (config.enableNotice) {
-            actions.push(<MessageIcon />)
+            actions.push(<MessageIcon onClick={() => setChangeMessageModalOpen(true)}/>)
           }
           return actions;
         }}
-        menu={{ defaultOpenAll: true, hideMenuWhenCollapsed: true }}
+        menu={{ defaultOpenAll: true }}
         menuItemRender={(item, dom) => (
           <Link onClick={() => setPathname(item.path || '/welcome')} to={item.path}>{dom}</Link>
         )}
@@ -232,6 +258,9 @@ const Layout: React.FC<RouteComponentProps> = ({ routes, currentUser }) => {
       <Modal title="修改密码" open={changePasswordModalOpen} onCancel={() => setChangePasswordModalOpen(false)} footer={null}>
         <ChangePasswordForm />
       </Modal>
+      <Drawer width="75%" title="修改密码" open={changeMessageModalOpen} onClose={() => setChangeMessageModalOpen(false)} >
+        <MessageList />
+      </Drawer>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import config from './config.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   define: {
     'process.env': '{}',
   },
@@ -20,6 +21,11 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 4096
+    chunkSizeWarningLimit: 4096,
+    output: {
+      entryFileNames: 'assets-web/[name].js',
+      chunkFileNames: 'assets-web/[name]-[hash].js',
+      assetFileNames: 'assets-web/[name]-[hash][extname]',
+    },
   }
 })

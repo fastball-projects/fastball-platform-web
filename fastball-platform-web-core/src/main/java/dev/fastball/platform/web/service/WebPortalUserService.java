@@ -1,5 +1,6 @@
 package dev.fastball.platform.web.service;
 
+import dev.fastball.components.common.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.platform.core.dict.PermissionType;
 import dev.fastball.platform.core.dict.UserStatus;
@@ -10,7 +11,6 @@ import dev.fastball.platform.web.config.WebApplication;
 import dev.fastball.platform.web.model.ApplicationDTO;
 import dev.fastball.platform.web.model.UserDTO;
 import dev.fastball.platform.web.model.UserQueryModel;
-import dev.fastball.ui.components.table.param.TableSearchParam;
 
 import java.util.List;
 

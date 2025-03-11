@@ -24,9 +24,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableJpaRepositories(basePackageClasses = UserRepo.class)
 @ComponentScan(basePackages = "dev.fastball.platform.web")
 public class JpaFastballSecurityConfiguration {
+
     @Bean
-    public FastballPortalService fastballPortalService(UserRepo fastballUserRepo, PermissionRepo permissionRepo, RoleRepo roleRepo, MenuRepo menuRepo, PasswordEncoder passwordEncoder) {
-        return new JpaFastballPortalService(fastballUserRepo, permissionRepo, roleRepo, menuRepo, passwordEncoder);
+    public FastballPortalService fastballPortalService(UserRepo fastballUserRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
+        return new JpaFastballPortalService(fastballUserRepo, roleRepo, passwordEncoder);
     }
 
     @Bean

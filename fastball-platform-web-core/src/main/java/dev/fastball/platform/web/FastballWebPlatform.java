@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -47,7 +48,7 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
         generateRoutes(workspaceDir, componentInfoList, config);
         generateConfig(workspaceDir, config);
         try {
-            ExecUtils.checkNodeAndPNPM();
+            ExecUtils.checkNode();
             ExecUtils.exec("npx pnpm i", workspaceDir, consoleInfoOut, consoleErrorOut);
             ExecUtils.execAsync("npm run dev --open", workspaceDir, consoleInfoOut, consoleErrorOut);
         } catch (IOException e) {
@@ -56,8 +57,21 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
     }
 
     @Override
-    public void build(File workspaceDir, List<ComponentInfo<?>> componentInfoList) {
-
+    public void build(File workspaceDir, File targetDir, List<ComponentInfo<?>> componentInfoList, OutputStream consoleInfoOut, OutputStream consoleErrorOut) {
+        WebPlatformConfig config = loadPlatformConfig();
+        copyProjectFiles(workspaceDir);
+        PackageJsonGenerator.generate(workspaceDir, componentInfoList, WebPlatformConstants.Portal.PACKAGE_FILE_SOURCE_PATH, config);
+        ComponentCodeGenerator.generate(workspaceDir, componentInfoList);
+        generateRoutes(workspaceDir, componentInfoList, config);
+        generateConfig(workspaceDir, config);
+        try {
+            ExecUtils.checkNode();
+            ExecUtils.exec("npx pnpm i", workspaceDir, consoleInfoOut, consoleErrorOut);
+            ExecUtils.exec("npm run build", workspaceDir, consoleInfoOut, consoleErrorOut);
+            FileUtils.copyDirectory(new File(workspaceDir, "dist"), targetDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void generateConfig(File generatedCodeDir, WebPlatformConfig fastballConfig) {
@@ -86,6 +100,9 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
         if (StringUtils.hasText(fastballConfig.getDescription())) {
             config.setDescription(fastballConfig.getDescription());
         }
+        if (StringUtils.hasText(fastballConfig.getMenuIconfontUrl())) {
+            config.setMenuIconfontUrl(fastballConfig.getMenuIconfontUrl());
+        }
         if (StringUtils.hasText(fastballConfig.getCopyright())) {
             config.setCopyright(fastballConfig.getCopyright());
         } else {
@@ -98,11 +115,24 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
         }
     }
 
-    private void copyProjectFiles(File generatedCodeDir) {
+    private void copyProjectFiles(File workspaceDir) {
         for (String needCopyResource : NEED_COPY_RESOURCES) {
-            GeneratorUtils.copyResourceFile(WebPlatformConstants.Portal.SOURCE_PATH + needCopyResource, new File(generatedCodeDir, needCopyResource));
+            try (InputStream inputStream = FastballWebPlatform.class.getResourceAsStream(WebPlatformConstants.Portal.SOURCE_PATH + needCopyResource)) {
+                if (inputStream == null) {
+                    throw new IllegalArgumentException("Copy resource[" + needCopyResource + "] not found");
+                }
+                FileUtils.copyInputStreamToFile(inputStream, new File(workspaceDir, needCopyResource));
+            } catch (IOException e) {
+                throw new GenerateException(e);
+            }
         }
     }
+
+//    private void copyProjectFiles(File generatedCodeDir) {
+//        for (String needCopyResource : NEED_COPY_RESOURCES) {
+//            GeneratorUtils.copyResourceFile(WebPlatformConstants.Portal.SOURCE_PATH + needCopyResource, new File(generatedCodeDir, needCopyResource));
+//        }
+//    }
 
     // use template engine?
     private void generateRoutes(File generatedCodeDir, List<ComponentInfo<?>> componentInfoList, WebPlatformConfig fastballConfig) {
@@ -142,7 +172,7 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
 
 
     protected Route buildMenu(String menuPath, WebMenu menu, Map<String, ComponentInfo<?>> componentInfoMap, Set<ComponentInfo<?>> usedComponent) {
-        Route.RouteBuilder routeBuilder = Route.builder().path(menuPath).name(menu.getTitle()).params(menu.getParams());
+        Route.RouteBuilder routeBuilder = Route.builder().path(menuPath).name(menu.getTitle()).icon(menu.getIcon()).params(menu.getParams());
         if (menu.getComponent() != null) {
             ComponentInfo<?> componentInfo = componentInfoMap.get(menu.getComponent());
             if (componentInfo != null) {

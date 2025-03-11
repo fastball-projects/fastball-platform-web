@@ -1,43 +1,32 @@
 package dev.fastball.platform.web.data.jpa.service;
 
 import dev.fastball.core.exception.BusinessException;
-import dev.fastball.platform.core.dict.PermissionType;
 import dev.fastball.platform.core.dict.UserStatus;
-import dev.fastball.platform.core.exception.UserNotFoundException;
-import dev.fastball.platform.core.exception.RoleNotFoundException;
-import dev.fastball.platform.core.model.CurrentUser;
 import dev.fastball.platform.core.model.RegisterUser;
-import dev.fastball.platform.core.model.context.Menu;
-import dev.fastball.platform.core.model.context.Permission;
 import dev.fastball.platform.core.model.context.Role;
-import dev.fastball.platform.core.model.context.User;
 import dev.fastball.platform.core.model.entity.UserEntity;
 import dev.fastball.platform.core.service.FastballPortalService;
+import dev.fastball.platform.web.config.WebPlatformConfig;
 import dev.fastball.platform.web.data.jpa.entity.JpaRoleEntity;
 import dev.fastball.platform.web.data.jpa.entity.JpaUserEntity;
-import dev.fastball.platform.web.data.jpa.repo.MenuRepo;
-import dev.fastball.platform.web.data.jpa.repo.PermissionRepo;
 import dev.fastball.platform.web.data.jpa.repo.RoleRepo;
 import dev.fastball.platform.web.data.jpa.repo.UserRepo;
+import dev.fastball.platform.web.model.CurrentUser;
+import dev.fastball.platform.web.utils.ConfigUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class JpaFastballPortalService implements FastballPortalService {
 
     private final UserRepo userRepo;
-    private final PermissionRepo permissionRepo;
     private final RoleRepo roleRepo;
-    private final MenuRepo menuRepo;
     private final PasswordEncoder passwordEncoder;
+    private final WebPlatformConfig fastballConfig = ConfigUtils.getWebPlatformConfig();
 
     @Override
     public UserEntity loadAccountByUsername(String username) {
@@ -53,6 +42,8 @@ public class JpaFastballPortalService implements FastballPortalService {
         userEntity.setStatus(UserStatus.Enabled);
         if (user.getPassword() != null) {
             userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            userEntity.setPassword(passwordEncoder.encode(fastballConfig.getUser().getDefaultPassword()));
         }
         userRepo.save(userEntity);
         return userEntity;
@@ -71,7 +62,7 @@ public class JpaFastballPortalService implements FastballPortalService {
     @Override
     public void changePassword(Long userId, String password, String newPassword) {
         Optional<JpaUserEntity> userOptional = userRepo.findById(userId);
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             return;
         }
         JpaUserEntity user = userOptional.get();
@@ -85,7 +76,7 @@ public class JpaFastballPortalService implements FastballPortalService {
     @Override
     public boolean resetPasswordByUserId(Long userId, String password) {
         Optional<JpaUserEntity> userOptional = userRepo.findById(userId);
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             return false;
         }
         JpaUserEntity user = userOptional.get();

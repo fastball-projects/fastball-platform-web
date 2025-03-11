@@ -17,6 +17,10 @@ public interface WebPlatformConstants {
         String ADMIN_ROLE_DESCRIPTION = "系统管理员";
     }
 
+    interface User {
+        String USER_DEFAULT_PASSWORD = "fastball";
+    }
+
     interface BusinessContext {
         String BUSINESS_CONTEXT_KEY_HEADER = "X-Business-Context-Key";
         String BUSINESS_CONTEXT_ID_HEADER = "X-Business-Context-Id";
@@ -47,7 +51,7 @@ public interface WebPlatformConstants {
 
     interface Generate {
         String[] NEED_COPY_RESOURCES = new String[]{
-                "tsconfig.json", "vite.config.ts", "index.html", "public/logo.svg", "types/index.d.ts", "src/main.tsx", "src/change-password.tsx", "src/business-context.tsx", "src/login.tsx", "src/utils.ts", "src/login.scss", "src/message.tsx", "src/route-builder.tsx"
+                "tsconfig.json", "vite.config.ts", "index.html", "public/logo.svg", "types/index.d.ts", "src/main.tsx", "src/main.scss", "src/change-password.tsx", "src/business-context.tsx", "src/login.tsx", "src/utils.ts", "src/login.scss", "src/message.tsx", "src/route-builder.tsx"
         };
     }
 

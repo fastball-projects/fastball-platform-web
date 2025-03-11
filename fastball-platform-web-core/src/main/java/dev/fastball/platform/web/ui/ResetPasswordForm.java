@@ -5,7 +5,7 @@ import dev.fastball.core.annotation.UIComponent;
 import dev.fastball.core.exception.BusinessException;
 import dev.fastball.platform.core.service.FastballPortalService;
 import dev.fastball.platform.web.model.UserResetPassword;
-import dev.fastball.ui.components.form.Form;
+import dev.fastball.components.form.Form;
 import lombok.RequiredArgsConstructor;
 
 @UIComponent

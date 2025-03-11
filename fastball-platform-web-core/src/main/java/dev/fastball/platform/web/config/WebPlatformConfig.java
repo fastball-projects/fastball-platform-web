@@ -17,9 +17,11 @@ public class WebPlatformConfig {
     private String description;
     private String copyright;
     private String devServerUrl;
+    private String menuIconfontUrl;
     private boolean enableNotice;
     private Map<String, String> customNpmDependencies;
     private Map<String, WebApplication> applications;
 
     private WebPortalAdmin admin = new WebPortalAdmin();
+    private WebPortalUser user = new WebPortalUser();
 }

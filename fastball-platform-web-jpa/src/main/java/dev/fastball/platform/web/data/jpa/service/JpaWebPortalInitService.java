@@ -21,6 +21,7 @@ import dev.fastball.platform.web.data.jpa.repo.MenuRepo;
 import dev.fastball.platform.web.data.jpa.repo.PermissionRepo;
 import dev.fastball.platform.web.service.WebPortalInitService;
 import dev.fastball.platform.web.service.WebPortalRoleService;
+import dev.fastball.platform.web.utils.ConfigUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -50,21 +51,15 @@ public class JpaWebPortalInitService implements WebPortalInitService {
 
     @Override
     public void initMenusAndMenuPermissions() {
-        ResourceLoader resourceResolver = new PathMatchingResourcePatternResolver();
-        Resource menuResource = resourceResolver.getResource(PLATFORM_CONFIG_PATH_PREFIX + PLATFORM + PLATFORM_CONFIG_SUFFIX);
-        try (InputStream inputStream = menuResource.getInputStream()) {
-            WebPlatformConfig fastballConfig = YamlUtils.fromYaml(inputStream, WebPlatformConfig.class);
-            if (fastballConfig == null || fastballConfig.getApplications() == null) {
-                return;
-            }
-            for (Map.Entry<String, WebApplication> app : fastballConfig.getApplications().entrySet()) {
-                initApplicationAndPermission(app.getKey(), app.getValue());
-            }
-            if (fastballConfig.getAdmin() != null && fastballConfig.getAdmin().getInit()) {
-                initAdmin(fastballConfig);
-            }
-        } catch (IOException e) {
-            throw new FastballPortalException(e);
+        WebPlatformConfig fastballConfig = ConfigUtils.getWebPlatformConfig();
+        if (fastballConfig == null || fastballConfig.getApplications() == null) {
+            return;
+        }
+        for (Map.Entry<String, WebApplication> app : fastballConfig.getApplications().entrySet()) {
+            initApplicationAndPermission(app.getKey(), app.getValue());
+        }
+        if (fastballConfig.getAdmin() != null && fastballConfig.getAdmin().getInit()) {
+            initAdmin(fastballConfig);
         }
     }
 
@@ -107,6 +102,7 @@ public class JpaWebPortalInitService implements WebPortalInitService {
         }
         menuEntity.setApplicationId(application.getId());
         menuEntity.setName(menuInfo.getTitle());
+        menuEntity.setIcon(menuInfo.getIcon());
         menuEntity.setDescription(menuInfo.getDescription());
         menuEntity.setParams(menuInfo.getParams());
         if (hash != menuEntity.hashCode()) {

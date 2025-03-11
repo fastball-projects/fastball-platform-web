@@ -49,7 +49,9 @@ export const BusinessContextSelector: React.FC<BusinessContextSelectorProps> = (
     const items = businessContextItems.map(item => ({ value: item.id, label: item.title }));
 
     return <Select
-        style={{ width: 120 }}
+        showSearch
+        variant="filled"
+        style={{ width: 200 }}
         value={businessContextId}
         onChange={onChange}
         options={items}

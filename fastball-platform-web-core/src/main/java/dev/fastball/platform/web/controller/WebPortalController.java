@@ -27,6 +27,7 @@ public class WebPortalController {
     private final WebPortalMessageAccessor messageAccessor;
     private final WebPortalUserService userService;
 
+
     @GetMapping("/currentUser")
     public Result<CurrentUser> getCurrentUser() {
         User user = PortalContext.currentUser();

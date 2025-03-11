@@ -35,7 +35,6 @@ export const MessageList: React.FC = () => {
     return <>
         <ProList<Message>
             rowKey="id"
-            headerTitle="消息中心"
             showActions="hover"
             request={async (
                 params
@@ -82,7 +81,7 @@ export const MessageList: React.FC = () => {
     </>
 }
 
-export const MessageIcon: React.FC = () => {
+export const MessageIcon: React.FC = ({ onClick }) => {
     const [hasUnreadMessage, setHasUnreadMessage] = useState<boolean>(false);
 
     const fetchData = async () => {
@@ -102,8 +101,6 @@ export const MessageIcon: React.FC = () => {
         return () => clearInterval(intervalId);
     }, []);
     return <Badge dot={hasUnreadMessage}>
-        <BellOutlined onClick={() => {
-            location.href = '/#/message';
-        }} />
+        <BellOutlined onClick={onClick} />
     </Badge>
 };

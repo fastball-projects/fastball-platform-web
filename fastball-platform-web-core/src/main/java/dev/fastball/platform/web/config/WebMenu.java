@@ -17,6 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class WebMenu {
     private String title;
+    private String icon;
     private String component;
     private String description;
     private Object params;

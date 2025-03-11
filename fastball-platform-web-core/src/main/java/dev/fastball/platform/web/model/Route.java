@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class Route {
     private String name;
+    private String icon;
     private String path;
     @JsonSerialize(using = RefComponentSerialize.class)
     private String component;

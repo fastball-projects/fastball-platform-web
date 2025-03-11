@@ -1,11 +1,11 @@
 package dev.fastball.platform.web.service;
 
+import dev.fastball.components.common.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.platform.core.model.context.Permission;
 import dev.fastball.platform.core.model.context.Role;
 import dev.fastball.platform.web.model.RoleDTO;
 import dev.fastball.platform.web.model.RoleQueryModel;
-import dev.fastball.ui.components.table.param.TableSearchParam;
 
 import java.util.Collection;
 import java.util.List;

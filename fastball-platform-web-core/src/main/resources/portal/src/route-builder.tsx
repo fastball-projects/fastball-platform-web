@@ -9,7 +9,7 @@ export const routeBuilder = (menu: MenuItemRoute) => {
     if (menu.component) {
         const MenuItemComponent = menu.component
         routeProps.element = (
-            <PageContainer>
+            <PageContainer breadcrumbRender={false}>
                 <MenuItemComponent input={menu.params} />
             </PageContainer>
         )

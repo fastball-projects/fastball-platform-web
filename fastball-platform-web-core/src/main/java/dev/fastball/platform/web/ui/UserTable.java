@@ -1,5 +1,6 @@
 package dev.fastball.platform.web.ui;
 
+import dev.fastball.components.common.query.TableSearchParam;
 import dev.fastball.core.annotation.*;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.core.component.RecordActionFilter;
@@ -8,8 +9,7 @@ import dev.fastball.platform.core.dict.UserStatus;
 import dev.fastball.platform.web.model.UserDTO;
 import dev.fastball.platform.web.model.UserQueryModel;
 import dev.fastball.platform.web.service.WebPortalUserService;
-import dev.fastball.ui.components.table.SearchTable;
-import dev.fastball.ui.components.table.param.TableSearchParam;
+import dev.fastball.components.table.SearchTable;
 import lombok.RequiredArgsConstructor;
 
 @UIComponent

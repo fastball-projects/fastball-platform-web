@@ -5,19 +5,19 @@
     <parent>
         <groupId>dev.fastball</groupId>
         <artifactId>fastball-parent</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.9.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>fastball-platform-web</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
-    <url>https://github.com/fastball-projects/fastball-portal</url>
+    <url>https://github.com/fastball-projects/fastball-platform-web</url>
 
-    <name>Fastball portal</name>
-    <description>Fastball portal</description>
+    <name>Fastball platform web</name>
+    <description>Fastball platform web</description>
 
     <organization>
         <name>FanShu Inc.</name>
@@ -25,13 +25,13 @@
     </organization>
 
     <scm>
-        <url>https://github.com/fastball-projects/fastball-portal</url>
-        <connection>git://github.com/fastball-projects/fastball-portal.git</connection>
-        <developerConnection>git@github.com:fastball-projects/fastball-portal.git</developerConnection>
+        <url>https://github.com/fastball-projects/fastball-platform-web</url>
+        <connection>git://github.com/fastball-projects/fastball-platform-web.git</connection>
+        <developerConnection>git@github.com:fastball-projects/fastball-platform-web.git</developerConnection>
     </scm>
     <issueManagement>
         <system>Github Issues</system>
-        <url>https://github.com/fastball-projects/fastball-portal/issues</url>
+        <url>https://github.com/fastball-projects/fastball-platform-web/issues</url>
     </issueManagement>
     <licenses>
         <license>
@@ -91,8 +91,8 @@
     </profiles>
 
     <properties>
-        <fastball.version>0.8.0-SNAPSHOT</fastball.version>
-        <fastball-ui.version>0.8.0-SNAPSHOT</fastball-ui.version>
+        <fastball.version>0.9.0-SNAPSHOT</fastball.version>
+        <fastball-ui.version>0.9.0-SNAPSHOT</fastball-ui.version>
     </properties>
 
     <modules>
@@ -127,39 +127,15 @@
             <dependency>
                 <groupId>dev.fastball</groupId>
                 <artifactId>fastball-platform-web-core</artifactId>
-                <version>0.8.0-SNAPSHOT</version>
+                <version>0.9.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.fastball</groupId>
                 <artifactId>fastball-platform-web-jpa</artifactId>
-                <version>0.8.0-SNAPSHOT</version>
+                <version>0.9.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.32</version>
-                        </path>
-                        <path>
-                            <groupId>com.google.auto.service</groupId>
-                            <artifactId>auto-service</artifactId>
-                            <version>1.0.1</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

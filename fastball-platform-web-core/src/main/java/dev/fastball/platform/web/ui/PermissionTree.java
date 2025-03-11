@@ -5,8 +5,8 @@ import dev.fastball.core.component.DataResult;
 import dev.fastball.platform.core.model.context.Permission;
 import dev.fastball.platform.web.model.PermissionDTO;
 import dev.fastball.platform.web.service.WebPortalRoleService;
-import dev.fastball.ui.components.tree.Tree;
-import dev.fastball.ui.components.tree.config.TreeConfig;
+import dev.fastball.components.tree.Tree;
+import dev.fastball.components.tree.config.TreeConfig;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

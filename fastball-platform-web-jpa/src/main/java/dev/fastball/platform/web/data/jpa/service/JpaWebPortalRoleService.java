@@ -1,5 +1,6 @@
 package dev.fastball.platform.web.data.jpa.service;
 
+import dev.fastball.components.common.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.platform.core.exception.RoleNotFoundException;
 import dev.fastball.platform.core.exception.UserNotFoundException;
@@ -13,7 +14,6 @@ import dev.fastball.platform.web.data.jpa.repo.UserRepo;
 import dev.fastball.platform.web.model.RoleDTO;
 import dev.fastball.platform.web.model.RoleQueryModel;
 import dev.fastball.platform.web.service.WebPortalRoleService;
-import dev.fastball.ui.components.table.param.TableSearchParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;

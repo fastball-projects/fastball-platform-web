@@ -24,6 +24,7 @@ public class JpaMenuEntity extends JpaBaseEntity implements MenuEntity {
 
     @Column(unique = true)
     private String code;
+    private String icon;
     private String name;
     private String path;
     @Convert(converter = MapJsonConverter.class)

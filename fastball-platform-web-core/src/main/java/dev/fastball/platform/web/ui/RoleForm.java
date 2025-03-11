@@ -4,7 +4,7 @@ import dev.fastball.core.annotation.RecordAction;
 import dev.fastball.core.annotation.UIComponent;
 import dev.fastball.platform.web.model.RoleDTO;
 import dev.fastball.platform.web.service.WebPortalRoleService;
-import dev.fastball.ui.components.form.Form;
+import dev.fastball.components.form.Form;
 import lombok.RequiredArgsConstructor;
 
 @UIComponent

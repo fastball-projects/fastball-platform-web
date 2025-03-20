@@ -4,7 +4,6 @@ import dev.fastball.core.annotation.Field;
 import dev.fastball.core.annotation.TreeLookup;
 import dev.fastball.meta.basic.ValueType;
 import dev.fastball.platform.web.ui.action.PermissionTreeAction;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;

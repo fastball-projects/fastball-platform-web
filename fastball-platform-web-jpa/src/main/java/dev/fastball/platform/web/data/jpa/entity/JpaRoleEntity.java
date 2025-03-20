@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.fastball.core.annotation.Field;
 import dev.fastball.orm.jpa.JpaBaseEntity;
 import dev.fastball.platform.core.model.entity.RoleEntity;
+import jakarta.persistence.*;
 import lombok.*;
 
-import jakarta.persistence.*;
 import java.util.List;
 
 @Getter

@@ -1,13 +1,11 @@
 package dev.fastball.platform.web.service;
 
-import dev.fastball.components.common.query.TableSearchParam;
+import dev.fastball.components.common.metadata.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
-import dev.fastball.platform.core.dict.PermissionType;
 import dev.fastball.platform.core.dict.UserStatus;
 import dev.fastball.platform.core.exception.UserNotFoundException;
 import dev.fastball.platform.core.model.context.Menu;
 import dev.fastball.platform.core.model.context.Permission;
-import dev.fastball.platform.web.config.WebApplication;
 import dev.fastball.platform.web.model.ApplicationDTO;
 import dev.fastball.platform.web.model.UserDTO;
 import dev.fastball.platform.web.model.UserQueryModel;

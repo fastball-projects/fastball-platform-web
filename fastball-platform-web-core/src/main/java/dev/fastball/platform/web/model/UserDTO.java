@@ -2,7 +2,8 @@ package dev.fastball.platform.web.model;
 
 import dev.fastball.core.annotation.Field;
 import dev.fastball.platform.core.dict.UserStatus;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Getter

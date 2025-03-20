@@ -1,10 +1,10 @@
 package dev.fastball.platform.web.ui;
 
+import dev.fastball.components.form.Form;
 import dev.fastball.core.annotation.RecordAction;
 import dev.fastball.core.annotation.UIComponent;
 import dev.fastball.platform.web.model.RoleDTO;
 import dev.fastball.platform.web.service.WebPortalRoleService;
-import dev.fastball.components.form.Form;
 import lombok.RequiredArgsConstructor;
 
 @UIComponent

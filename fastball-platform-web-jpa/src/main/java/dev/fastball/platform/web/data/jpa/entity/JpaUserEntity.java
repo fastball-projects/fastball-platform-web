@@ -6,9 +6,9 @@ import dev.fastball.meta.basic.DisplayType;
 import dev.fastball.orm.jpa.JpaBaseEntity;
 import dev.fastball.platform.core.dict.UserStatus;
 import dev.fastball.platform.core.model.entity.UserEntity;
+import jakarta.persistence.*;
 import lombok.*;
 
-import jakarta.persistence.*;
 import java.util.List;
 
 @Getter

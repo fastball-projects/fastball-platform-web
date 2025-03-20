@@ -1,11 +1,11 @@
 package dev.fastball.platform.web.ui;
 
+import dev.fastball.components.form.Form;
 import dev.fastball.core.annotation.RecordAction;
 import dev.fastball.core.annotation.UIComponent;
 import dev.fastball.core.exception.BusinessException;
 import dev.fastball.platform.core.service.FastballPortalService;
 import dev.fastball.platform.web.model.UserResetPassword;
-import dev.fastball.components.form.Form;
 import lombok.RequiredArgsConstructor;
 
 @UIComponent

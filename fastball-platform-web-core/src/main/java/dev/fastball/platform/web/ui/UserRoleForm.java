@@ -1,12 +1,12 @@
 package dev.fastball.platform.web.ui;
 
+import dev.fastball.components.form.VariableForm;
 import dev.fastball.core.annotation.RecordAction;
 import dev.fastball.core.annotation.UIComponent;
 import dev.fastball.platform.core.model.context.Role;
 import dev.fastball.platform.web.model.UserDTO;
 import dev.fastball.platform.web.model.UserRoleModel;
 import dev.fastball.platform.web.service.WebPortalRoleService;
-import dev.fastball.components.form.VariableForm;
 import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Collectors;

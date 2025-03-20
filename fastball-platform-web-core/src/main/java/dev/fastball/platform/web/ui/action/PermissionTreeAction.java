@@ -4,7 +4,6 @@ import dev.fastball.core.annotation.UIComponent;
 import dev.fastball.core.component.LookupActionParam;
 import dev.fastball.core.component.TreeLookupAction;
 import dev.fastball.platform.core.model.context.Permission;
-import dev.fastball.platform.core.service.FastballPortalService;
 import dev.fastball.platform.web.model.PermissionDTO;
 import dev.fastball.platform.web.service.WebPortalRoleService;
 import lombok.RequiredArgsConstructor;

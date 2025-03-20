@@ -2,13 +2,15 @@ package dev.fastball.platform.web.data.jpa.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.fastball.orm.jpa.JpaBaseEntity;
-import dev.fastball.platform.core.dict.PermissionType;
 import dev.fastball.platform.core.model.entity.PermissionEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.util.List;
 
 @Getter

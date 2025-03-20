@@ -1,6 +1,6 @@
 package dev.fastball.platform.web.data.jpa.service;
 
-import dev.fastball.components.common.query.TableSearchParam;
+import dev.fastball.components.common.metadata.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.platform.core.dict.UserStatus;
 import dev.fastball.platform.core.exception.UserNotFoundException;

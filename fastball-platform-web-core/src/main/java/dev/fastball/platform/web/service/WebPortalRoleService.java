@@ -1,6 +1,6 @@
 package dev.fastball.platform.web.service;
 
-import dev.fastball.components.common.query.TableSearchParam;
+import dev.fastball.components.common.metadata.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.platform.core.model.context.Permission;
 import dev.fastball.platform.core.model.context.Role;

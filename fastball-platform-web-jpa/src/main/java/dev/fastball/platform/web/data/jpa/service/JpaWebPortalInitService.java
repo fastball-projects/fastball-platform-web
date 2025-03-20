@@ -1,8 +1,6 @@
 package dev.fastball.platform.web.data.jpa.service;
 
-import dev.fastball.meta.utils.YamlUtils;
 import dev.fastball.platform.core.dict.UserStatus;
-import dev.fastball.platform.core.exception.FastballPortalException;
 import dev.fastball.platform.core.model.RegisterUser;
 import dev.fastball.platform.core.model.context.Permission;
 import dev.fastball.platform.core.model.context.Role;
@@ -10,8 +8,8 @@ import dev.fastball.platform.core.model.context.User;
 import dev.fastball.platform.core.service.FastballPortalService;
 import dev.fastball.platform.web.WebPlatformConstants;
 import dev.fastball.platform.web.config.WebApplication;
-import dev.fastball.platform.web.config.WebPlatformConfig;
 import dev.fastball.platform.web.config.WebMenu;
+import dev.fastball.platform.web.config.WebPlatformConfig;
 import dev.fastball.platform.web.config.WebPortalAdmin;
 import dev.fastball.platform.web.data.jpa.entity.JpaApplicationEntity;
 import dev.fastball.platform.web.data.jpa.entity.JpaMenuEntity;
@@ -23,21 +21,14 @@ import dev.fastball.platform.web.service.WebPortalInitService;
 import dev.fastball.platform.web.service.WebPortalRoleService;
 import dev.fastball.platform.web.utils.ConfigUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static dev.fastball.platform.core.FastballPlatformConstants.PLATFORM_CONFIG_PATH_PREFIX;
-import static dev.fastball.platform.core.FastballPlatformConstants.PLATFORM_CONFIG_SUFFIX;
 import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
 
 @RequiredArgsConstructor

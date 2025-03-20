@@ -1,6 +1,5 @@
 package dev.fastball.platform.web.model;
 
-import dev.fastball.platform.core.dict.PermissionType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;

@@ -19,7 +19,8 @@
         </dependency>
         <dependency>
             <groupId>dev.fastball</groupId>
-            <artifactId>fastball-orm-jpa</artifactId>
+            <artifactId>fastball-platform-data-jpa</artifactId>
+            <version>${fastball.version}</version>
         </dependency>
     </dependencies>
 

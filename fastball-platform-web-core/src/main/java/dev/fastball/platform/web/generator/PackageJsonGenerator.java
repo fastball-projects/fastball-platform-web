@@ -2,7 +2,7 @@ package dev.fastball.platform.web.generator;
 
 import dev.fastball.meta.component.ComponentInfo;
 import dev.fastball.meta.utils.JsonUtils;
-import dev.fastball.platform.core.exception.GenerateException;
+import dev.fastball.platform.exception.GenerateException;
 import dev.fastball.platform.web.config.WebPlatformConfig;
 import dev.fastball.platform.web.model.NodePackage;
 import org.apache.commons.io.FileUtils;

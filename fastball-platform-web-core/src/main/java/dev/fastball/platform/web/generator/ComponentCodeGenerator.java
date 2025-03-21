@@ -4,7 +4,7 @@ import dev.fastball.meta.component.ComponentInfo;
 import dev.fastball.meta.component.ComponentProps;
 import dev.fastball.meta.component.ReferencedComponentInfo;
 import dev.fastball.meta.utils.JsonUtils;
-import dev.fastball.platform.core.exception.GenerateException;
+import dev.fastball.platform.exception.GenerateException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

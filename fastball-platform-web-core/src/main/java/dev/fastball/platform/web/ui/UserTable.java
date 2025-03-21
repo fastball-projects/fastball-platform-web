@@ -1,15 +1,16 @@
 package dev.fastball.platform.web.ui;
 
-import dev.fastball.components.common.metadata.query.TableSearchParam;
+import dev.fastball.components.common.query.TableSearchParam;
 import dev.fastball.components.table.SearchTable;
 import dev.fastball.core.annotation.*;
 import dev.fastball.core.component.DataResult;
 import dev.fastball.core.component.RecordActionFilter;
 import dev.fastball.meta.basic.PopupType;
-import dev.fastball.platform.core.dict.UserStatus;
+import dev.fastball.platform.dict.UserStatus;
+import dev.fastball.platform.service.PlatformUserService;
 import dev.fastball.platform.web.model.UserDTO;
 import dev.fastball.platform.web.model.UserQueryModel;
-import dev.fastball.platform.web.service.WebPortalUserService;
+import dev.fastball.platform.web.service.WebPortalDataService;
 import lombok.RequiredArgsConstructor;
 
 @UIComponent
@@ -24,11 +25,12 @@ import lombok.RequiredArgsConstructor;
 )
 public class UserTable implements SearchTable<UserDTO, UserQueryModel> {
 
-    private final WebPortalUserService userService;
+    private final WebPortalDataService dataService;
+    private final PlatformUserService userService;
 
     @Override
     public DataResult<UserDTO> loadData(TableSearchParam<UserQueryModel> search) {
-        return userService.pagingUser(search);
+        return dataService.pagingUser(search);
     }
 
     @RecordAction(name = "启用", recordActionFilter = EnabledRecordActionFilter.class)

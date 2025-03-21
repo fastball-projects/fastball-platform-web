@@ -3,9 +3,9 @@ package dev.fastball.platform.web;
 import com.google.auto.service.AutoService;
 import dev.fastball.meta.component.ComponentInfo;
 import dev.fastball.meta.utils.JsonUtils;
-import dev.fastball.platform.core.FastballPlatform;
-import dev.fastball.platform.core.exception.GenerateException;
-import dev.fastball.platform.core.utils.ExecUtils;
+import dev.fastball.platform.FastballPlatform;
+import dev.fastball.platform.exception.GenerateException;
+import dev.fastball.platform.utils.ExecUtils;
 import dev.fastball.platform.web.config.WebMenu;
 import dev.fastball.platform.web.config.WebPlatformConfig;
 import dev.fastball.platform.web.generator.ComponentCodeGenerator;
@@ -126,12 +126,6 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
             }
         }
     }
-
-//    private void copyProjectFiles(File generatedCodeDir) {
-//        for (String needCopyResource : NEED_COPY_RESOURCES) {
-//            GeneratorUtils.copyResourceFile(WebPlatformConstants.Portal.SOURCE_PATH + needCopyResource, new File(generatedCodeDir, needCopyResource));
-//        }
-//    }
 
     // use template engine?
     private void generateRoutes(File generatedCodeDir, List<ComponentInfo<?>> componentInfoList, WebPlatformConfig fastballConfig) {

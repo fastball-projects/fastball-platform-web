@@ -2,8 +2,8 @@ package dev.fastball.platform.web.controller;
 
 import dev.fastball.core.Result;
 import dev.fastball.core.component.DataResult;
-import dev.fastball.platform.core.context.PortalContext;
-import dev.fastball.platform.core.model.context.User;
+import dev.fastball.platform.context.PortalContext;
+import dev.fastball.platform.entity.User;
 import dev.fastball.platform.web.feature.business.context.BusinessContextItem;
 import dev.fastball.platform.web.feature.business.context.WebPortalBusinessContextAccessor;
 import dev.fastball.platform.web.feature.message.Message;
@@ -11,7 +11,7 @@ import dev.fastball.platform.web.feature.message.WebPortalMessageAccessor;
 import dev.fastball.platform.web.model.ApplicationDTO;
 import dev.fastball.platform.web.model.CurrentUser;
 import dev.fastball.platform.web.service.WebPortalBusinessContextService;
-import dev.fastball.platform.web.service.WebPortalUserService;
+import dev.fastball.platform.web.service.WebPortalDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,7 @@ public class WebPortalController {
 
     private final WebPortalBusinessContextService businessContextService;
     private final WebPortalMessageAccessor messageAccessor;
-    private final WebPortalUserService userService;
+    private final WebPortalDataService portalDataService;
 
 
     @GetMapping("/currentUser")
@@ -34,19 +34,19 @@ public class WebPortalController {
         CurrentUser currentUser = new CurrentUser();
         currentUser.setNickname(user.getNickname());
         currentUser.setUsername(user.getUsername());
-        currentUser.setApplications(userService.getUserApplicationsWithMenu(PortalContext.currentUser().getId()));
+        currentUser.setApplications(portalDataService.getUserApplicationsWithMenu(PortalContext.currentUser().getId()));
         return Result.success(currentUser);
     }
 
     @GetMapping("/application")
     public Result<List<ApplicationDTO>> applications() {
         User user = PortalContext.currentUser();
-        return Result.success(userService.getUserApplications(user.getId()));
+        return Result.success(portalDataService.getUserApplications(user.getId()));
     }
 
     @GetMapping("/application/{applicationKey}")
     public Result<ApplicationDTO> application(String applicationKey) {
-        return Result.success(userService.getUserApplicationWithMenu(PortalContext.currentUser().getId(), applicationKey));
+        return Result.success(portalDataService.getUserApplicationWithMenu(PortalContext.currentUser().getId(), applicationKey));
     }
 
     @GetMapping("/hasUnreadMessage")

@@ -1,6 +1,5 @@
 package dev.fastball.platform.web.model;
 
-import dev.fastball.platform.core.model.context.Menu;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +13,5 @@ public class ApplicationDTO {
     private String icon;
     private String description;
     private String businessContext;
-    private List<Menu> menus;
+    private List<MenuDTO> menus;
 }

@@ -1,49 +1,46 @@
 package dev.fastball.platform.web.data.jpa.service;
 
-import dev.fastball.components.common.metadata.query.TableSearchParam;
+import dev.fastball.components.common.query.TableSearchParam;
 import dev.fastball.core.component.DataResult;
-import dev.fastball.platform.core.dict.UserStatus;
-import dev.fastball.platform.core.exception.UserNotFoundException;
-import dev.fastball.platform.core.model.context.Menu;
-import dev.fastball.platform.core.model.context.Permission;
+import dev.fastball.platform.data.jpa.entity.JpaPermissionEntity;
+import dev.fastball.platform.data.jpa.entity.JpaRoleEntity;
+import dev.fastball.platform.data.jpa.entity.JpaUserEntity;
+import dev.fastball.platform.data.jpa.repo.RoleRepo;
+import dev.fastball.platform.data.jpa.repo.UserRepo;
+import dev.fastball.platform.entity.Permission;
+import dev.fastball.platform.entity.Role;
+import dev.fastball.platform.service.PlatformPermissionService;
+import dev.fastball.platform.service.PlatformRoleService;
 import dev.fastball.platform.web.WebPlatformConstants;
 import dev.fastball.platform.web.data.jpa.entity.JpaApplicationEntity;
 import dev.fastball.platform.web.data.jpa.entity.JpaMenuEntity;
-import dev.fastball.platform.web.data.jpa.entity.JpaUserEntity;
 import dev.fastball.platform.web.data.jpa.repo.ApplicationRepo;
 import dev.fastball.platform.web.data.jpa.repo.MenuRepo;
-import dev.fastball.platform.web.data.jpa.repo.PermissionRepo;
-import dev.fastball.platform.web.data.jpa.repo.UserRepo;
-import dev.fastball.platform.web.model.ApplicationDTO;
-import dev.fastball.platform.web.model.UserDTO;
-import dev.fastball.platform.web.model.UserQueryModel;
-import dev.fastball.platform.web.service.WebPortalUserService;
+import dev.fastball.platform.web.model.*;
+import dev.fastball.platform.web.service.WebPortalDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
 
 
-@Service
 @RequiredArgsConstructor
-public class JpaWebPortalUserService implements WebPortalUserService {
+public class JpaWebPortalDataService implements WebPortalDataService {
 
+    private final PlatformPermissionService<JpaPermissionEntity> permissionService;
+    private final PlatformRoleService<Role> roleService;
+    private final RoleRepo roleRepo;
     private final UserRepo userRepo;
     private final ApplicationRepo applicationRepo;
-    private final PermissionRepo permissionRepo;
     private final MenuRepo menuRepo;
-
-    @Override
-    public List<Menu> getUserMenu(Long userId) {
-        List<Long> menuIdList = findUserPermissionTargetIdList(userId, WebPlatformConstants.PermissionType.MENU);
-        return menuRepo.findAllById(menuIdList).stream().map(menu -> (Menu) menu).toList();
-    }
 
     @Override
     public List<ApplicationDTO> getUserApplications(Long userId) {
@@ -55,9 +52,9 @@ public class JpaWebPortalUserService implements WebPortalUserService {
     public List<ApplicationDTO> getUserApplicationsWithMenu(Long userId) {
         List<Long> applicationIdList = findUserPermissionTargetIdList(userId, WebPlatformConstants.PermissionType.APPLICATION);
         List<Long> menuIdList = findUserPermissionTargetIdList(userId, WebPlatformConstants.PermissionType.MENU);
-        Map<Long, List<Menu>> applicationMenuMap = menuRepo.findAllById(menuIdList)
+        Map<Long, List<MenuDTO>> applicationMenuMap = menuRepo.findAllById(menuIdList)
                 .stream()
-                .collect(Collectors.groupingBy(JpaMenuEntity::getApplicationId, Collectors.mapping(menu -> (Menu) menu, Collectors.toList())));
+                .collect(Collectors.groupingBy(JpaMenuEntity::getApplicationId, Collectors.mapping(this::convert, Collectors.toList())));
 
         return applicationRepo.findAllById(applicationIdList)
                 .stream()
@@ -71,7 +68,7 @@ public class JpaWebPortalUserService implements WebPortalUserService {
 
     @Override
     public ApplicationDTO getUserApplicationWithMenu(Long userId, String applicationKey) {
-        Permission permission = getUserPermission(userId, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
+        Permission permission = permissionService.getUserPermission(userId, PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
         if (permission == null) {
             return null;
         }
@@ -82,23 +79,8 @@ public class JpaWebPortalUserService implements WebPortalUserService {
         ApplicationDTO application = convert(applicationEntity);
         List<Long> menuIdList = findUserPermissionTargetIdList(userId, WebPlatformConstants.PermissionType.MENU);
         List<JpaMenuEntity> menus = menuRepo.findByApplicationIdAndIdIn(applicationEntity.getId(), menuIdList);
-        application.setMenus(menus.stream().map(menu -> (Menu) menu).toList());
+        application.setMenus(menus.stream().map(this::convert).toList());
         return application;
-    }
-
-    @Override
-    public List<Permission> getUserPermission(Long userId) {
-        return permissionRepo.findByUserId(userId).stream().map(p -> (Permission) p).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Permission> getUserPermission(Long userId, String permissionType) {
-        return permissionRepo.findByUserIdAndPlatformAndType(userId, PLATFORM, permissionType).stream().map(p -> (Permission) p).collect(Collectors.toList());
-    }
-
-    @Override
-    public Permission getUserPermission(Long userId, String permissionType, String permissionCode) {
-        return permissionRepo.findByUserIdAndPlatformAndTypeAndCode(userId, PLATFORM, permissionType, permissionCode);
     }
 
     @Override
@@ -121,44 +103,36 @@ public class JpaWebPortalUserService implements WebPortalUserService {
 
 
     @Override
-    public UserStatus getUserStatus(Long userId) throws UserNotFoundException {
-        Optional<JpaUserEntity> userOptional = userRepo.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException();
+    public DataResult<RoleDTO> pagingRole(TableSearchParam<RoleQueryModel> search) {
+        PageRequest pageRequest = PageRequest.of(search.getCurrent().intValue() - 1, search.getPageSize().intValue());
+        Page<JpaRoleEntity> result;
+        if (search.getSearch() == null) {
+            result = roleRepo.findAll(pageRequest);
+        } else {
+            Example<JpaRoleEntity> example = Example.of(
+                    JpaRoleEntity.builder().name(search.getSearch().getName()).build()
+            );
+            result = roleRepo.findAll(example, pageRequest);
         }
-        return userOptional.get().getStatus();
+        List<RoleDTO> roleDTOList = result.getContent().stream()
+                .map(roleEntity -> RoleDTO.builder()
+                        .id(roleEntity.getId())
+                        .code(roleEntity.getCode())
+                        .name(roleEntity.getName())
+                        .description(roleEntity.getDescription())
+                        .permissions(roleEntity.getPermissions().stream().map(Permission::getId).collect(Collectors.toList()))
+                        .build())
+                .collect(Collectors.toList());
+        return DataResult.build(result.getTotalElements(), roleDTOList);
     }
 
     @Override
-    public boolean enableUser(Long userId) {
-        Optional<JpaUserEntity> userOptional = userRepo.findById(userId);
-        if (userOptional.isEmpty()) {
-            return false;
-        }
-        JpaUserEntity user = userOptional.get();
-        user.setStatus(UserStatus.Enabled);
-        user.setNickname(user.getNickname());
-        user.setLastUpdatedAt(new Date());
-        userRepo.save(user);
-        return true;
-    }
-
-    @Override
-    public boolean disableUser(Long userId) {
-        Optional<JpaUserEntity> userOptional = userRepo.findById(userId);
-        if (userOptional.isEmpty()) {
-            return false;
-        }
-        JpaUserEntity user = userOptional.get();
-        user.setStatus(UserStatus.Disabled);
-        user.setNickname(user.getNickname());
-        user.setLastUpdatedAt(new Date());
-        userRepo.save(user);
-        return true;
+    public void saveRole(RoleDTO role) {
+        roleService.save(convertEntity(role));
     }
 
     private List<Long> findUserPermissionTargetIdList(Long userId, String permissionType) {
-        return getUserPermission(userId, permissionType)
+        return permissionService.getUserPermissions(userId, PLATFORM, permissionType)
                 .stream().map(Permission::getTarget)
                 .filter(Objects::nonNull)
                 .mapToLong(Long::valueOf)
@@ -176,6 +150,17 @@ public class JpaWebPortalUserService implements WebPortalUserService {
                 .build();
     }
 
+    private MenuDTO convert(JpaMenuEntity menu) {
+        return MenuDTO.builder()
+                .id(menu.getId())
+                .parentId(menu.getParentId())
+                .name(menu.getName())
+                .path(menu.getPath())
+                .description(menu.getDescription())
+                .params(menu.getParams())
+                .build();
+    }
+
     private UserDTO convert(JpaUserEntity user) {
         return UserDTO.builder()
                 .id(user.getId())
@@ -188,5 +173,19 @@ public class JpaWebPortalUserService implements WebPortalUserService {
                 .lastUpdatedAt(user.getLastUpdatedAt())
                 .lastUpdatedBy(user.getLastUpdatedBy())
                 .build();
+    }
+
+    private JpaRoleEntity convertEntity(RoleDTO role) {
+        JpaRoleEntity roleEntity = new JpaRoleEntity();
+        roleEntity.setId(role.getId());
+        roleEntity.setCode(role.getCode());
+        roleEntity.setName(role.getName());
+        roleEntity.setDescription(role.getDescription());
+        if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+            roleEntity.setPermissions(permissionService.getPermissionsById(role.getPermissions()));
+        } else {
+            roleEntity.setPermissions(Collections.emptyList());
+        }
+        return roleEntity;
     }
 }

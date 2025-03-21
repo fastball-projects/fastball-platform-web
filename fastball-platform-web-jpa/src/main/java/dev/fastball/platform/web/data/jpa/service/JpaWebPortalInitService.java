@@ -1,11 +1,14 @@
 package dev.fastball.platform.web.data.jpa.service;
 
-import dev.fastball.platform.core.dict.UserStatus;
-import dev.fastball.platform.core.model.RegisterUser;
-import dev.fastball.platform.core.model.context.Permission;
-import dev.fastball.platform.core.model.context.Role;
-import dev.fastball.platform.core.model.context.User;
-import dev.fastball.platform.core.service.FastballPortalService;
+import dev.fastball.platform.data.jpa.entity.JpaPermissionEntity;
+import dev.fastball.platform.data.jpa.entity.JpaRoleEntity;
+import dev.fastball.platform.dict.UserStatus;
+import dev.fastball.platform.model.RegisterUser;
+import dev.fastball.platform.entity.Permission;
+import dev.fastball.platform.entity.User;
+import dev.fastball.platform.service.PlatformPermissionService;
+import dev.fastball.platform.service.PlatformRoleService;
+import dev.fastball.platform.service.PlatformUserService;
 import dev.fastball.platform.web.WebPlatformConstants;
 import dev.fastball.platform.web.config.WebApplication;
 import dev.fastball.platform.web.config.WebMenu;
@@ -13,12 +16,10 @@ import dev.fastball.platform.web.config.WebPlatformConfig;
 import dev.fastball.platform.web.config.WebPortalAdmin;
 import dev.fastball.platform.web.data.jpa.entity.JpaApplicationEntity;
 import dev.fastball.platform.web.data.jpa.entity.JpaMenuEntity;
-import dev.fastball.platform.web.data.jpa.entity.JpaPermissionEntity;
 import dev.fastball.platform.web.data.jpa.repo.ApplicationRepo;
 import dev.fastball.platform.web.data.jpa.repo.MenuRepo;
-import dev.fastball.platform.web.data.jpa.repo.PermissionRepo;
+import dev.fastball.platform.web.model.RoleDTO;
 import dev.fastball.platform.web.service.WebPortalInitService;
-import dev.fastball.platform.web.service.WebPortalRoleService;
 import dev.fastball.platform.web.utils.ConfigUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.CollectionUtils;
@@ -34,10 +35,11 @@ import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
 @RequiredArgsConstructor
 public class JpaWebPortalInitService implements WebPortalInitService {
 
-    private final FastballPortalService fastballPortalService;
-    private final WebPortalRoleService roleService;
+    private final PlatformUserService userService;
+    private final PlatformRoleService<JpaRoleEntity> roleService;
+    private final PlatformPermissionService<JpaPermissionEntity> permissionService;
+
     private final ApplicationRepo applicationRepo;
-    private final PermissionRepo permissionRepo;
     private final MenuRepo menuRepo;
 
     @Override
@@ -56,7 +58,7 @@ public class JpaWebPortalInitService implements WebPortalInitService {
 
     private void initAdmin(WebPlatformConfig fastballConfig) {
         WebPortalAdmin adminProperties = fastballConfig.getAdmin();
-        User adminUser = fastballPortalService.loadByUsername(adminProperties.getDefaultUsername());
+        User adminUser = userService.loadByUsername(adminProperties.getDefaultUsername());
         if (adminUser == null) {
             RegisterUser admin = new RegisterUser();
             admin.setNickname(adminProperties.getDefaultNickname());
@@ -64,15 +66,19 @@ public class JpaWebPortalInitService implements WebPortalInitService {
             admin.setMobile(adminProperties.getDefaultMobile());
             admin.setPassword(adminProperties.getDefaultPassword());
             admin.setStatus(UserStatus.Enabled);
-            fastballPortalService.registerUser(admin);
-            adminUser = fastballPortalService.loadByUsername(adminProperties.getDefaultUsername());
+            userService.registerUser(admin);
+            adminUser = userService.loadByUsername(adminProperties.getDefaultUsername());
         }
-        Role adminRole = roleService.loadRoleByCode(adminProperties.getAdminRoleCode());
+        JpaRoleEntity adminRole = roleService.loadRoleByCode(adminProperties.getAdminRoleCode());
         if (adminRole == null) {
-            adminRole = fastballPortalService.registerRole(adminProperties.getAdminRoleCode(), adminProperties.getAdminRoleName(), adminProperties.getAdminRoleDescription());
+            adminRole = new JpaRoleEntity();
+            adminRole.setCode(adminProperties.getAdminRoleCode());
+            adminRole.setName(adminProperties.getAdminRoleName());
+            adminRole.setDescription(adminProperties.getAdminRoleDescription());
+            adminRole = roleService.save(adminRole);
             roleService.saveUserRoles(adminUser.getId(), Collections.singletonList(adminRole.getId()));
         }
-        List<Long> allPermissionId = roleService.getAllPermissions().stream().map(Permission::getId).collect(Collectors.toList());
+        List<Long> allPermissionId = permissionService.getAllPermissions().stream().map(Permission::getId).collect(Collectors.toList());
         roleService.saveRolePermissions(adminUser.getId(), allPermissionId);
     }
 
@@ -111,7 +117,7 @@ public class JpaWebPortalInitService implements WebPortalInitService {
     }
 
     private JpaPermissionEntity initMenuPermission(JpaMenuEntity menu, JpaPermissionEntity parentPermission) {
-        JpaPermissionEntity permission = permissionRepo.findByPlatformAndPermissionTypeAndCode(PLATFORM, WebPlatformConstants.PermissionType.MENU, menu.getCode());
+        JpaPermissionEntity permission = permissionService.getPermission(PLATFORM, WebPlatformConstants.PermissionType.MENU, menu.getCode());
         int hash = 0;
         if (permission == null) {
             permission = new JpaPermissionEntity();
@@ -127,7 +133,7 @@ public class JpaWebPortalInitService implements WebPortalInitService {
             permission.setParentId(parentPermission.getId());
         }
         if (hash != permission.hashCode()) {
-            permissionRepo.save(permission);
+            permissionService.save(permission);
         }
         return permission;
     }
@@ -151,7 +157,7 @@ public class JpaWebPortalInitService implements WebPortalInitService {
             applicationEntity = applicationRepo.save(applicationEntity);
         }
 
-        JpaPermissionEntity permission = permissionRepo.findByPlatformAndPermissionTypeAndCode(PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
+        JpaPermissionEntity permission = permissionService.getPermission(PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
         if (permission == null) {
             permission = new JpaPermissionEntity();
             hash = 0;
@@ -165,7 +171,7 @@ public class JpaWebPortalInitService implements WebPortalInitService {
         permission.setTarget(applicationEntity.getId().toString());
 
         if (hash != permission.hashCode()) {
-            permission = permissionRepo.save(permission);
+            permission = permissionService.save(permission);
         }
 
         if (!CollectionUtils.isEmpty(app.getMenus())) {

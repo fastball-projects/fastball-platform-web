@@ -1,7 +1,7 @@
 package dev.fastball.platform.web.service.support;
 
 import dev.fastball.core.component.DataResult;
-import dev.fastball.platform.core.model.context.User;
+import dev.fastball.platform.entity.User;
 import dev.fastball.platform.web.feature.message.Message;
 import dev.fastball.platform.web.feature.message.WebPortalMessageAccessor;
 

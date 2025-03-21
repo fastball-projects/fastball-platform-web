@@ -1,7 +1,7 @@
 package dev.fastball.platform.web.model;
 
-import dev.fastball.platform.core.dict.UserStatus;
-import dev.fastball.platform.core.model.context.User;
+import dev.fastball.platform.dict.UserStatus;
+import dev.fastball.platform.entity.User;
 import lombok.Data;
 
 import java.util.List;

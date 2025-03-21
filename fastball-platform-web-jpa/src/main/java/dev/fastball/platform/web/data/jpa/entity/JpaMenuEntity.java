@@ -2,7 +2,6 @@ package dev.fastball.platform.web.data.jpa.entity;
 
 import dev.fastball.orm.jpa.JpaBaseEntity;
 import dev.fastball.orm.jpa.converter.MapJsonConverter;
-import dev.fastball.platform.core.model.entity.MenuEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -16,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "fb_menu")
 @EqualsAndHashCode(callSuper = true)
-public class JpaMenuEntity extends JpaBaseEntity implements MenuEntity {
+public class JpaMenuEntity extends JpaBaseEntity {
 
     private Long applicationId;
     private Long parentId;

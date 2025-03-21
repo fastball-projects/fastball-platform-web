@@ -3,24 +3,23 @@ package dev.fastball.platform.web.ui;
 import dev.fastball.components.form.VariableForm;
 import dev.fastball.core.annotation.RecordAction;
 import dev.fastball.core.annotation.UIComponent;
-import dev.fastball.platform.core.model.context.Role;
+import dev.fastball.platform.entity.Role;
+import dev.fastball.platform.service.PlatformRoleService;
 import dev.fastball.platform.web.model.UserDTO;
 import dev.fastball.platform.web.model.UserRoleModel;
-import dev.fastball.platform.web.service.WebPortalRoleService;
 import lombok.RequiredArgsConstructor;
 
-import java.util.stream.Collectors;
 
 @UIComponent
 @RequiredArgsConstructor
 public class UserRoleForm implements VariableForm<UserRoleModel, UserDTO> {
-    private final WebPortalRoleService roleService;
+    private final PlatformRoleService<?> roleService;
 
     @Override
     public UserRoleModel loadData(UserDTO user) {
         UserRoleModel userRole = new UserRoleModel();
         userRole.setUserId(user.getId());
-        userRole.setRoles(roleService.getUserRole(user.getId()).stream().map(Role::getId).collect(Collectors.toList()));
+        userRole.setRoles(roleService.getUserRoles(user.getId()).stream().map(Role::getId).toList());
         return userRole;
     }
 

@@ -9,8 +9,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static dev.fastball.platform.core.FastballPlatformConstants.PLATFORM_CONFIG_PATH_PREFIX;
-import static dev.fastball.platform.core.FastballPlatformConstants.PLATFORM_CONFIG_SUFFIX;
+import static dev.fastball.platform.FastballPlatformConstants.PLATFORM_CONFIG_PATH_PREFIX;
+import static dev.fastball.platform.FastballPlatformConstants.PLATFORM_CONFIG_SUFFIX;
 import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
 
 

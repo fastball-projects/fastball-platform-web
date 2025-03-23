@@ -40,7 +40,7 @@ export const MessageList: React.FC = () => {
                 params
             ) => {
                 const request = buildJsonRequestInfo()
-                const response = await fetch(`/api/portal/web/loadMessage?current=${params.current || 0}`, request);
+                const response = await fetch(`/api/portal/loadMessage?current=${params.current || 0}`, request);
                 const result = await response.json();
                 return {
                     data: result.data.data,
@@ -52,7 +52,7 @@ export const MessageList: React.FC = () => {
                 return {
                     onClick: (event) => {
                         const request = buildJsonRequestInfo('POST')
-                        fetch(`/api/portal/web/readMessage/${item.id}`, request);
+                        fetch(`/api/portal/readMessage/${item.id}`, request);
                         if (item.component) {
                             setOpenedMessage(item);
                         }
@@ -87,7 +87,7 @@ export const MessageIcon: React.FC = ({ onClick }) => {
     const fetchData = async () => {
         try {
             const request = buildJsonRequestInfo()
-            const response = await fetch('/api/portal/web/hasUnreadMessage', request);
+            const response = await fetch('/api/portal/hasUnreadMessage', request);
             const result = await response.json();
             setHasUnreadMessage(result.data);
         } catch (error) {

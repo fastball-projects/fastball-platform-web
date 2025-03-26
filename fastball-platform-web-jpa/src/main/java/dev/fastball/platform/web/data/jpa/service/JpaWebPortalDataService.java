@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
+import static dev.fastball.platform.web.WebPlatformConstants.WEB_PLATFORM;
 
 
 @RequiredArgsConstructor
@@ -68,7 +68,7 @@ public class JpaWebPortalDataService implements WebPortalDataService {
 
     @Override
     public ApplicationDTO getUserApplicationWithMenu(Long userId, String applicationKey) {
-        Permission permission = permissionService.getUserPermission(userId, PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
+        Permission permission = permissionService.getUserPermission(userId, WEB_PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
         if (permission == null) {
             return null;
         }
@@ -132,7 +132,7 @@ public class JpaWebPortalDataService implements WebPortalDataService {
     }
 
     private List<Long> findUserPermissionTargetIdList(Long userId, String permissionType) {
-        return permissionService.getUserPermissions(userId, PLATFORM, permissionType)
+        return permissionService.getUserPermissions(userId, WEB_PLATFORM, permissionType)
                 .stream().map(Permission::getTarget)
                 .filter(Objects::nonNull)
                 .mapToLong(Long::valueOf)

@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 import static dev.fastball.platform.FastballPlatformConstants.PLATFORM_CONFIG_PATH_PREFIX;
 import static dev.fastball.platform.FastballPlatformConstants.PLATFORM_CONFIG_SUFFIX;
-import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
+import static dev.fastball.platform.web.WebPlatformConstants.WEB_PLATFORM;
 
 
 public class ConfigUtils {
@@ -24,7 +24,7 @@ public class ConfigUtils {
 
     public static WebPlatformConfig getWebPlatformConfig() {
         if (instance == null) {
-            Resource menuResource = resourceResolver.getResource(PLATFORM_CONFIG_PATH_PREFIX + PLATFORM + PLATFORM_CONFIG_SUFFIX);
+            Resource menuResource = resourceResolver.getResource(PLATFORM_CONFIG_PATH_PREFIX + WEB_PLATFORM + PLATFORM_CONFIG_SUFFIX);
             try (InputStream inputStream = menuResource.getInputStream()) {
                 instance = YamlUtils.fromYaml(inputStream, WebPlatformConfig.class);
             } catch (IOException e) {

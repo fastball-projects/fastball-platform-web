@@ -4,6 +4,8 @@ import com.google.auto.service.AutoService;
 import dev.fastball.meta.component.ComponentInfo;
 import dev.fastball.meta.utils.JsonUtils;
 import dev.fastball.platform.FastballPlatform;
+import dev.fastball.platform.PlatformDevServerConfig;
+import dev.fastball.platform.exception.FastballPortalException;
 import dev.fastball.platform.exception.GenerateException;
 import dev.fastball.platform.utils.ExecUtils;
 import dev.fastball.platform.web.config.WebMenu;
@@ -17,10 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,21 +34,44 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
 
     @Override
     public String platform() {
-        return PLATFORM;
+        return WEB_PLATFORM;
     }
 
     @Override
-    public void run(File workspaceDir, List<ComponentInfo<?>> componentInfoList, OutputStream consoleInfoOut, OutputStream consoleErrorOut) {
-        WebPlatformConfig config = loadPlatformConfig();
-        copyProjectFiles(workspaceDir);
-        PackageJsonGenerator.generate(workspaceDir, componentInfoList, WebPlatformConstants.Portal.PACKAGE_FILE_SOURCE_PATH, config);
-        ComponentCodeGenerator.generate(workspaceDir, componentInfoList);
-        generateRoutes(workspaceDir, componentInfoList, config);
-        generateConfig(workspaceDir, config);
-        try {
-            ExecUtils.checkNode();
-            ExecUtils.exec("npx pnpm i", workspaceDir, consoleInfoOut, consoleErrorOut);
-            ExecUtils.execAsync("npm run dev --open", workspaceDir, consoleInfoOut, consoleErrorOut);
+    public void run(File workspaceDir, List<ComponentInfo<?>> componentInfoList, PlatformDevServerConfig devServerConfig, OutputStream consoleInfoOut) {
+        File dependencyLog = new File(workspaceDir, "install-dependency.log");
+        File devServerLog = new File(workspaceDir, "dev-server.log");
+        try (
+                OutputStream dependencyLogOut = new FileOutputStream(dependencyLog, true);
+                OutputStream devServerLogOut = new FileOutputStream(devServerLog, true)
+        ) {
+            generateProject(workspaceDir, componentInfoList, dependencyLogOut, dependencyLogOut);
+            int port = DEV_SERVER_PORT;
+            String host = DEV_SERVER_HOST;
+            boolean open = true;
+            if (devServerConfig != null) {
+                if (devServerConfig.getPort() != null) {
+                    port = devServerConfig.getPort();
+                }
+                if (StringUtils.hasLength(devServerConfig.getHost())) {
+                    host = devServerConfig.getHost();
+                }
+                if (!devServerConfig.getOpen()) {
+                    open = false;
+                }
+            }
+            StringBuilder command = new StringBuilder("npm run dev -- ");
+            command.append(" --port ").append(port);
+            command.append(" --host ").append(host);
+            if (open) {
+                command.append(" --open");
+            }
+            String printInfo = "Platform [" + WEB_PLATFORM + "] dev server running at:\n" +
+                    "\t\tLocal：http://" + host + ":" + port + "\n" +
+                    "\t\tDependency install log：" + devServerLog.getAbsolutePath() + "\n"+
+                    "\t\tDevServer log：" + devServerLog.getAbsolutePath() + "\n";
+            consoleInfoOut.write(printInfo.getBytes());
+            ExecUtils.exec(command.toString(), workspaceDir, devServerLogOut, devServerLogOut);
         } catch (IOException e) {
             throw new GenerateException(e);
         }
@@ -57,6 +79,16 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
 
     @Override
     public void build(File workspaceDir, File targetDir, List<ComponentInfo<?>> componentInfoList, OutputStream consoleInfoOut, OutputStream consoleErrorOut) {
+        try {
+            generateProject(workspaceDir, componentInfoList, consoleInfoOut, consoleErrorOut);
+            ExecUtils.exec("npm run build", workspaceDir, consoleInfoOut, consoleErrorOut);
+            FileUtils.copyDirectory(new File(workspaceDir, "dist"), targetDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void generateProject(File workspaceDir, List<ComponentInfo<?>> componentInfoList, OutputStream consoleInfoOut, OutputStream consoleErrorOut) {
         WebPlatformConfig config = loadPlatformConfig();
         copyProjectFiles(workspaceDir);
         PackageJsonGenerator.generate(workspaceDir, componentInfoList, WebPlatformConstants.Portal.PACKAGE_FILE_SOURCE_PATH, config);
@@ -66,10 +98,8 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
         try {
             ExecUtils.checkNode();
             ExecUtils.exec("npx pnpm i", workspaceDir, consoleInfoOut, consoleErrorOut);
-            ExecUtils.exec("npm run build", workspaceDir, consoleInfoOut, consoleErrorOut);
-            FileUtils.copyDirectory(new File(workspaceDir, "dist"), targetDir);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FastballPortalException(e);
         }
     }
 

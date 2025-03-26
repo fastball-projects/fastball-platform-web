@@ -5,7 +5,10 @@ import static dev.fastball.core.Constants.FASTBALL_VIEW_SUFFIX;
 
 public interface WebPlatformConstants {
 
-    String PLATFORM = "web";
+    String WEB_PLATFORM = "web";
+
+    int DEV_SERVER_PORT = 12300;
+    String DEV_SERVER_HOST = "localhost";
 
     interface Admin {
         String ADMIN_DEFAULT_NICKNAME = "系统管理员";

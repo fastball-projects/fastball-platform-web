@@ -18,7 +18,6 @@ import dev.fastball.platform.web.data.jpa.entity.JpaApplicationEntity;
 import dev.fastball.platform.web.data.jpa.entity.JpaMenuEntity;
 import dev.fastball.platform.web.data.jpa.repo.ApplicationRepo;
 import dev.fastball.platform.web.data.jpa.repo.MenuRepo;
-import dev.fastball.platform.web.model.RoleDTO;
 import dev.fastball.platform.web.service.WebPortalInitService;
 import dev.fastball.platform.web.utils.ConfigUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static dev.fastball.platform.web.WebPlatformConstants.PLATFORM;
+import static dev.fastball.platform.web.WebPlatformConstants.WEB_PLATFORM;
 
 @RequiredArgsConstructor
 public class JpaWebPortalInitService implements WebPortalInitService {
@@ -117,14 +116,14 @@ public class JpaWebPortalInitService implements WebPortalInitService {
     }
 
     private JpaPermissionEntity initMenuPermission(JpaMenuEntity menu, JpaPermissionEntity parentPermission) {
-        JpaPermissionEntity permission = permissionService.getPermission(PLATFORM, WebPlatformConstants.PermissionType.MENU, menu.getCode());
+        JpaPermissionEntity permission = permissionService.getPermission(WEB_PLATFORM, WebPlatformConstants.PermissionType.MENU, menu.getCode());
         int hash = 0;
         if (permission == null) {
             permission = new JpaPermissionEntity();
         } else {
             hash = permission.hashCode();
         }
-        permission.setPlatform(PLATFORM);
+        permission.setPlatform(WEB_PLATFORM);
         permission.setPermissionType(WebPlatformConstants.PermissionType.MENU);
         permission.setName(menu.getName());
         permission.setCode(menu.getCode());
@@ -157,14 +156,14 @@ public class JpaWebPortalInitService implements WebPortalInitService {
             applicationEntity = applicationRepo.save(applicationEntity);
         }
 
-        JpaPermissionEntity permission = permissionService.getPermission(PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
+        JpaPermissionEntity permission = permissionService.getPermission(WEB_PLATFORM, WebPlatformConstants.PermissionType.APPLICATION, applicationKey);
         if (permission == null) {
             permission = new JpaPermissionEntity();
             hash = 0;
         } else {
             hash = applicationEntity.hashCode();
         }
-        permission.setPlatform(PLATFORM);
+        permission.setPlatform(WEB_PLATFORM);
         permission.setPermissionType(WebPlatformConstants.PermissionType.APPLICATION);
         permission.setName(app.getName());
         permission.setCode(applicationKey);

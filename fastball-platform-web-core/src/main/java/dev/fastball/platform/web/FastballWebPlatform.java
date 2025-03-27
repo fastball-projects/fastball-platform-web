@@ -38,9 +38,15 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
     }
 
     @Override
-    public void run(File workspaceDir, List<ComponentInfo<?>> componentInfoList, PlatformDevServerConfig devServerConfig, OutputStream consoleInfoOut) {
+    public void run(File workspaceDir, List<ComponentInfo<?>> componentInfoList, PlatformDevServerConfig devServerConfig) {
         File dependencyLog = new File(workspaceDir, "install-dependency.log");
         File devServerLog = new File(workspaceDir, "dev-server.log");
+        String startLog = """
+                Platform [{}] dev server start:
+                \t\tDependency install log：{}
+                \t\tDevServer log：{}
+                """;
+        log.info(startLog, platform(), dependencyLog.getAbsolutePath(), devServerLog.getAbsolutePath());
         try (
                 OutputStream dependencyLogOut = new FileOutputStream(dependencyLog, true);
                 OutputStream devServerLogOut = new FileOutputStream(devServerLog, true)
@@ -66,11 +72,11 @@ public class FastballWebPlatform implements FastballPlatform<WebPlatformConfig> 
             if (open) {
                 command.append(" --open");
             }
-            String printInfo = "Platform [" + WEB_PLATFORM + "] dev server running at:\n" +
-                    "\t\tLocal：http://" + host + ":" + port + "\n" +
-                    "\t\tDependency install log：" + devServerLog.getAbsolutePath() + "\n"+
-                    "\t\tDevServer log：" + devServerLog.getAbsolutePath() + "\n";
-            consoleInfoOut.write(printInfo.getBytes());
+            String startedLog = """
+                    Platform [{}] dev server running at:
+                    \t\tLocal：http://{}:{}
+                    """;
+            log.info(startedLog, platform(), host, port);
             ExecUtils.exec(command.toString(), workspaceDir, devServerLogOut, devServerLogOut);
         } catch (IOException e) {
             throw new GenerateException(e);

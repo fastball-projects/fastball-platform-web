@@ -1,0 +1,3 @@
+[submodule "fastball-platform-web-core/src/main/resources/web-portal"]
+	path = fastball-platform-web-core/src/main/resources/web-portal
+	url = git@github.com:fastball-projects/fastball-platform-web-frontend.git

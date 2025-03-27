@@ -39,7 +39,7 @@ public interface WebPlatformConstants {
 
     interface Portal {
 
-        String SOURCE_PATH = "/portal/";
+        String SOURCE_PATH = "/web-portal/";
 
         String PACKAGE_FILE_SOURCE_PATH = SOURCE_PATH + "package.json";
 

@@ -3,16 +3,12 @@ package dev.fastball.platform.web.controller;
 import dev.fastball.core.Result;
 import dev.fastball.platform.context.PortalContext;
 import dev.fastball.platform.entity.User;
-import dev.fastball.platform.web.feature.business.context.BusinessContextItem;
-import dev.fastball.platform.web.feature.business.context.WebPortalBusinessContextAccessor;
 import dev.fastball.platform.web.model.ApplicationDTO;
 import dev.fastball.platform.web.model.CurrentUser;
-import dev.fastball.platform.web.service.WebPortalBusinessContextService;
 import dev.fastball.platform.web.service.WebPortalDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -20,7 +16,6 @@ import java.util.List;
 @RequestMapping("/api/portal/web/")
 public class WebPortalController {
 
-    private final WebPortalBusinessContextService businessContextService;
     private final WebPortalDataService portalDataService;
 
 
@@ -43,14 +38,5 @@ public class WebPortalController {
     @GetMapping("/application/{applicationKey}")
     public Result<ApplicationDTO> application(String applicationKey) {
         return Result.success(portalDataService.getUserApplicationWithMenu(PortalContext.currentUser().getId(), applicationKey));
-    }
-
-    @GetMapping("/business-context/{businessContextKey}")
-    public Result<Collection<? extends BusinessContextItem>> loadBusinessContextItems(@PathVariable String businessContextKey) {
-        WebPortalBusinessContextAccessor<?> businessContext = businessContextService.getBusinessContext(businessContextKey);
-        if (businessContext != null) {
-            return Result.success(businessContext.listBusinessContextItems());
-        }
-        return Result.success();
     }
 }

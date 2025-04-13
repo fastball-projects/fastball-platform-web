@@ -12,8 +12,6 @@ import dev.fastball.platform.web.data.jpa.entity.JpaApplicationEntity;
 import dev.fastball.platform.web.data.jpa.repo.*;
 import dev.fastball.platform.web.data.jpa.service.JpaWebPortalDataService;
 import dev.fastball.platform.web.data.jpa.service.JpaWebPortalInitService;
-import dev.fastball.platform.web.filter.BusinessContextFilter;
-import dev.fastball.platform.web.service.WebPortalBusinessContextService;
 import dev.fastball.platform.web.service.WebPortalDataService;
 import dev.fastball.platform.web.service.WebPortalInitService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -44,11 +42,6 @@ public class JpaWebPlatformConfiguration {
             ApplicationRepo applicationRepo, MenuRepo menuRepo
     ) {
         return new JpaWebPortalInitService(userService, roleService, permissionService, applicationRepo, menuRepo);
-    }
-
-    @Bean
-    public BusinessContextFilter businessContextFilter(WebPortalBusinessContextService businessContextService) {
-        return new BusinessContextFilter(businessContextService);
     }
 
 }

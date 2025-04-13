@@ -24,11 +24,6 @@ public interface WebPlatformConstants {
         String USER_DEFAULT_PASSWORD = "fastball";
     }
 
-    interface BusinessContext {
-        String BUSINESS_CONTEXT_KEY_HEADER = "X-Business-Context-Key";
-        String BUSINESS_CONTEXT_ID_HEADER = "X-Business-Context-Id";
-    }
-
     interface Defaults {
         String LOGO_PATH = "/logo.svg";
         String DEV_SERVER_URL = "http://localhost:8080";
